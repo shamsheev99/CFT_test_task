@@ -11,7 +11,7 @@ public class Parser {
     boolean flag_data_type = false;
 
     String [] parse_args;
-    ArrayList<Character> flag_args;
+    boolean [] flag_args;
     ArrayList<String> path_files;
 
 
@@ -19,7 +19,7 @@ public class Parser {
     public Parser(String[] parse_args) {
         this.parse_args = parse_args;
         if (parse_args.length != 0) {
-            flag_args = new ArrayList<>();
+            flag_args = new boolean[2];
             path_files = new ArrayList<>();
         }
     }
@@ -39,22 +39,17 @@ public class Parser {
             if (it.charAt(0) == '-') {
                 if (it.charAt(1) == 'd') {
                     ++use_flag_d;
-                    if (checkRepeatFlag(use_flag_d)) flag_args.add(it.charAt(1));
-//                    System.out.println("flag d");
+                    if (checkRepeatFlag(use_flag_d)) flag_args[0] = true;
                 } else if (it.charAt(1) == 'a') {
                     ++use_flag_a;
-                    if (checkRepeatFlag(use_flag_a)) flag_args.add(it.charAt(1));
-//                    System.out.println("flag a");
+                    if (checkRepeatFlag(use_flag_a)) flag_args[0] = false;
                 } else if (it.charAt(1) == 'i') {
                     ++use_flag_i;
-                    if (checkRepeatFlag(use_flag_d)) flag_args.add(it.charAt(1));
-//                    System.out.println("flag i");
+                    if (checkRepeatFlag(use_flag_i)) flag_args[1] = false;
                 } else if (it.charAt(1) == 's') {
                     ++use_flag_s;
-                    if (checkRepeatFlag(use_flag_a)) flag_args.add(it.charAt(1));
-//                    System.out.println("flag s");
+                    if (checkRepeatFlag(use_flag_s)) flag_args[1] = true;
                 } else {
-//                    System.out.println("incorrect flags, use -a,-d,-i,-s");
                     sendException("incorrect flags, use -a,-d,-i,-s");
                 }
                 checkAntiFlag(use_flag_d, use_flag_a);
@@ -91,12 +86,11 @@ public class Parser {
     }
 
     private void sendException(String message) throws Exception {
-        flag_args.clear();
         path_files.clear();
         throw new Exception(message);
     }
 
-    public ArrayList<Character> getFlag_args() {
+    public boolean[] getFlag_args() {
         return flag_args;
     }
 
