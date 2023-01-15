@@ -1,7 +1,9 @@
 package bin;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.File;
+
+import java.util.ArrayList;
+
 
 public class Parser {
 //    private: // TODO private
@@ -9,19 +11,25 @@ public class Parser {
     boolean flag_data_type = false;
 
     String [] parse_args;
-    Character [] flag_args;
-    String [] path_files;
+    ArrayList<Character> flag_args;
+    ArrayList<String> path_files;
+
 
 
     public Parser(String[] parse_args) {
         this.parse_args = parse_args;
+        if (parse_args.length != 0) {
+            flag_args = new ArrayList<>();
+            path_files = new ArrayList<>();
+        }
     }
 
-    void parseString() {
+    void parseString() throws Exception {
         if (parse_args.length == 0) {
-            //TODO exception
-            System.out.println("empty");
+            sendException("Please enter parameters");
+//            System.out.println("empty");
         }
+
         int use_flag_d = 0;
         int use_flag_a = 0;
         int use_flag_i = 0;
@@ -31,58 +39,68 @@ public class Parser {
             if (it.charAt(0) == '-') {
                 if (it.charAt(1) == 'd') {
                     ++use_flag_d;
-                    checkRepeatFlag(use_flag_d);
-                    System.out.println("flag d");
+                    if (checkRepeatFlag(use_flag_d)) flag_args.add(it.charAt(1));
+//                    System.out.println("flag d");
                 } else if (it.charAt(1) == 'a') {
                     ++use_flag_a;
-                    checkRepeatFlag(use_flag_a);
-                    System.out.println("flag a");
+                    if (checkRepeatFlag(use_flag_a)) flag_args.add(it.charAt(1));
+//                    System.out.println("flag a");
                 } else if (it.charAt(1) == 'i') {
                     ++use_flag_i;
-                    checkRepeatFlag(use_flag_d);
-                    System.out.println("flag i");
+                    if (checkRepeatFlag(use_flag_d)) flag_args.add(it.charAt(1));
+//                    System.out.println("flag i");
                 } else if (it.charAt(1) == 's') {
                     ++use_flag_s;
-                    checkRepeatFlag(use_flag_a);
-                    System.out.println("flag s");
+                    if (checkRepeatFlag(use_flag_a)) flag_args.add(it.charAt(1));
+//                    System.out.println("flag s");
                 } else {
-                    System.out.println("incorrect flags, use -a,-d,-i,-s");
-                    // TODO exception incorrect flag
+//                    System.out.println("incorrect flags, use -a,-d,-i,-s");
+                    sendException("incorrect flags, use -a,-d,-i,-s");
                 }
                 checkAntiFlag(use_flag_d, use_flag_a);
                 checkAntiFlag(use_flag_i, use_flag_s);
             } else {
-                checkFileExtension(it);
+                if (checkFile(it)) path_files.add(it);
             }
         }
     }
 
-    private void checkAntiFlag(int flag1, int flag2) {
+    private void checkAntiFlag(int flag1, int flag2) throws Exception {
         if (flag1 > 0 && flag2 > 0) {
-            //TODO exception
-            System.out.println("use -a or -d, -s or -i");
+            sendException("use -a or -d, -s or -i");
+//            System.out.println("use -a or -d, -s or -i");
         }
     }
 
-    private void checkRepeatFlag(int flag) {
+    private boolean checkRepeatFlag(int flag) throws Exception {
         if (flag > 1) {
-            //TODO exception
-            System.out.println("you can use flag once");
+            sendException("Flag can use once");
+//            System.out.println("you can use flag once");
         }
+        return true;
     }
 
-    private void checkFileExtension(String it) {
-        String regex = "^[A-Za-z0-9+_.-]+.txt$";
-        Pattern pattern = Pattern.compile(regex) ;
-        Matcher matcher = pattern.matcher(it);
-        if (!matcher.matches()) {
-            //TODO exception
-            System.out.println("incorrect parameters");
-        } else {
-            System.out.println(it);
+    private boolean checkFile(String it) throws Exception {
+        File checking_file = new File(it);
+        if (!checking_file.isFile()) {
+            //TODO exception error file
+            sendException("No such file or directory");
+//            System.out.println("No such file or directory");
         }
-
+        return true;
     }
 
+    private void sendException(String message) throws Exception {
+        flag_args.clear();
+        path_files.clear();
+        throw new Exception(message);
+    }
 
+    public ArrayList<Character> getFlag_args() {
+        return flag_args;
+    }
+
+    public ArrayList<String> getPath_files() {
+        return path_files;
+    }
 }
