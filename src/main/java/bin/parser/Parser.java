@@ -1,4 +1,4 @@
-package bin;
+package bin.parser;
 
 import java.io.File;
 
@@ -6,14 +6,11 @@ import java.util.ArrayList;
 
 
 public class Parser {
-//    private: // TODO private
-    boolean flag_sort_type = false;
-    boolean flag_data_type = false;
-
-    String [] parse_args;
-    boolean [] flag_args;
-    ArrayList<String> path_files;
-
+    private final boolean flag_sort_type = false;
+    private final boolean flag_data_type = false;
+    private final String [] parse_args;
+    private boolean [] flag_args;
+    private ArrayList<String> path_files;
 
 
     public Parser(String[] parse_args) {
@@ -24,10 +21,9 @@ public class Parser {
         }
     }
 
-    void parseString() throws Exception {
+    public void parseString() throws Exception {
         if (parse_args.length == 0) {
             sendException("Please enter parameters");
-//            System.out.println("empty");
         }
 
         int use_flag_d = 0;
@@ -55,7 +51,7 @@ public class Parser {
                 checkAntiFlag(use_flag_d, use_flag_a);
                 checkAntiFlag(use_flag_i, use_flag_s);
             } else {
-                if (checkFile(it)) path_files.add(it);
+                path_files.add(it);
             }
         }
     }
@@ -63,24 +59,12 @@ public class Parser {
     private void checkAntiFlag(int flag1, int flag2) throws Exception {
         if (flag1 > 0 && flag2 > 0) {
             sendException("use -a or -d, -s or -i");
-//            System.out.println("use -a or -d, -s or -i");
         }
     }
 
     private boolean checkRepeatFlag(int flag) throws Exception {
         if (flag > 1) {
             sendException("Flag can use once");
-//            System.out.println("you can use flag once");
-        }
-        return true;
-    }
-
-    private boolean checkFile(String it) throws Exception {
-        File checking_file = new File(it);
-        if (!checking_file.isFile()) {
-            //TODO exception error file
-            sendException("No such file or directory");
-//            System.out.println("No such file or directory");
         }
         return true;
     }
