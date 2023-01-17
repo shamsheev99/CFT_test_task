@@ -1,31 +1,26 @@
 package bin.parser;
 
-import java.io.File;
-
 import java.util.ArrayList;
 
 
 public class Parser {
-    private final boolean flag_sort_type = false;
-    private final boolean flag_data_type = false;
     private final String [] parse_args;
-    private boolean [] flag_args;
+
+    private int sort_type_;
+
+    private int data_type_;
     private ArrayList<String> path_files;
 
 
-    public Parser(String[] parse_args) {
-        this.parse_args = parse_args;
-        if (parse_args.length != 0) {
-            flag_args = new boolean[2];
-            path_files = new ArrayList<>();
-        }
+    public Parser(String[] args) {
+        this.parse_args = args;
+        path_files = new ArrayList<>();
     }
 
     public void parseString() throws Exception {
         if (parse_args.length == 0) {
-            sendException("Please enter parameters");
+            sendException("Empty args, please enter parameters (-a or -d, -i or -s, outputfile(*.txt) input files(*.txt))");
         }
-
         int use_flag_d = 0;
         int use_flag_a = 0;
         int use_flag_i = 0;
@@ -35,18 +30,18 @@ public class Parser {
             if (it.charAt(0) == '-') {
                 if (it.charAt(1) == 'd') {
                     ++use_flag_d;
-                    if (checkRepeatFlag(use_flag_d)) flag_args[0] = true;
+                    if (checkRepeatFlag(use_flag_d)) sort_type_ = Flag.DECREASE.ordinal();
                 } else if (it.charAt(1) == 'a') {
                     ++use_flag_a;
-                    if (checkRepeatFlag(use_flag_a)) flag_args[0] = false;
+                    if (checkRepeatFlag(use_flag_a)) sort_type_ = Flag.INCREASE.ordinal();
                 } else if (it.charAt(1) == 'i') {
                     ++use_flag_i;
-                    if (checkRepeatFlag(use_flag_i)) flag_args[1] = false;
+                    if (checkRepeatFlag(use_flag_i)) data_type_ = Flag.INTEGER.ordinal();
                 } else if (it.charAt(1) == 's') {
                     ++use_flag_s;
-                    if (checkRepeatFlag(use_flag_s)) flag_args[1] = true;
+                    if (checkRepeatFlag(use_flag_s)) data_type_ = Flag.STRING.ordinal();
                 } else {
-                    sendException("incorrect flags, use -a,-d,-i,-s");
+                    sendException("-"+it.charAt(1) + " - incorrect flag, use -a,-d,-i,-s");
                 }
                 checkAntiFlag(use_flag_d, use_flag_a);
                 checkAntiFlag(use_flag_i, use_flag_s);
@@ -58,7 +53,7 @@ public class Parser {
 
     private void checkAntiFlag(int flag1, int flag2) throws Exception {
         if (flag1 > 0 && flag2 > 0) {
-            sendException("use -a or -d, -s or -i");
+            sendException("You can use -a and -d in one run, -s or -i");
         }
     }
 
@@ -74,11 +69,18 @@ public class Parser {
         throw new Exception(message);
     }
 
-    public boolean[] getFlag_args() {
-        return flag_args;
-    }
-
     public ArrayList<String> getPath_files() {
         return path_files;
     }
+    public int getSort_type() {
+        return sort_type_;
+    }
+    public int getData_type() {
+        return data_type_;
+    }
+    public enum Flag {
+        INCREASE, DECREASE, INTEGER, STRING
+    }
+
 }
+

@@ -1,10 +1,14 @@
 package bin.strategyreader;
 
+import bin.parser.Parser;
+
+import java.io.File;
+
 import static java.lang.Character.isDigit;
 import static java.lang.Character.isWhitespace;
 
 public class StringReader extends AbstractReader {
-    public StringReader(boolean sortFlag, String fileName) {
+    public StringReader(int sortFlag, File fileName) {
         super(sortFlag, fileName);
     }
 
@@ -21,6 +25,6 @@ public class StringReader extends AbstractReader {
 
     @Override
     public boolean compareData(String first, String second)  {
-        return sort_flag_ ?  first.compareTo(second) < 0 : first.compareTo(second) > 0;
+        return sort_flag_ == Parser.Flag.INCREASE.ordinal() ?  first.compareTo(second) < 0 : first.compareTo(second) > 0;
     }
 }

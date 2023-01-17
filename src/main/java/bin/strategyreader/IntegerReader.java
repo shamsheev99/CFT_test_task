@@ -1,9 +1,13 @@
 package bin.strategyreader;
 
+import bin.parser.Parser;
+
+import java.io.File;
+
 import static java.lang.Character.isDigit;
 
 public class IntegerReader extends AbstractReader {
-    public IntegerReader(boolean sortFlag, String fileName) {
+    public IntegerReader(int sortFlag, File fileName) {
         super(sortFlag, fileName);
     }
     @Override
@@ -21,7 +25,7 @@ public class IntegerReader extends AbstractReader {
 
     @Override
     public boolean compareData(String first, String second)  {
-        return sort_flag_ ? Integer.parseInt(first) < Integer.parseInt(second) : Integer.parseInt(first) > Integer.parseInt(second);
+        return sort_flag_ == Parser.Flag.INCREASE.ordinal() ? Integer.parseInt(first) < Integer.parseInt(second) : Integer.parseInt(first) > Integer.parseInt(second);
     }
 
 }

@@ -10,10 +10,9 @@ public abstract class AbstractReader {
 
     protected String buffer_;
     protected Scanner scanner_;
-    protected final boolean sort_flag_;
-    public AbstractReader(boolean sortFlag, String fileName) {
+    protected final int sort_flag_;
+    public AbstractReader(int sortFlag, File file) {
         sort_flag_ = sortFlag;
-        File file = new File(fileName);
         try {
             scanner_ = new Scanner(file);
         } catch (FileNotFoundException e) {
