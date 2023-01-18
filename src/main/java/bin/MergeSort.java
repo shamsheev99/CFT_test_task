@@ -1,4 +1,4 @@
-package bin.Sort;
+package bin;
 
 import bin.parser.Parser;
 import bin.strategyreader.AbstractReader;
@@ -7,6 +7,8 @@ import bin.strategyreader.StringReader;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -17,15 +19,58 @@ public class MergeSort {
     private int data_flag_;
     private int sort_flag_;
 
+    private FileWriter writer_ = null;
     private File output_file_;
     private ArrayList<File> files_;
-    ArrayList<AbstractReader> reader;
+    ArrayList<AbstractReader> reader_;
 
 //TODO tmp class, would be refactor
     public MergeSort(String [] args) {
         this.args_ = args;
-        files_ = new ArrayList<File>();
-        reader = new ArrayList<AbstractReader>();
+        files_ = new ArrayList<>();
+        reader_ = new ArrayList<>();
+    }
+
+    public void Sort() {
+        try {
+            callParser();
+            validFiles();
+            setReaders();
+            startSort();
+            writer_.close();
+        }  catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
+
+    private void startSort() throws IOException {
+        int j = 0;
+        while (j < 20) {
+            ArrayList<String> currentLines = new ArrayList<String>();
+            for (int i = 0; i < reader_.size(); i++) {
+                reader_.get(i).getNext();
+                currentLines.add(reader_.get(i).getCurrent());
+            }
+            write(currentLines.get(comparator(currentLines)));
+            j++;
+        }
+    }
+
+    private int comparator(ArrayList<String> lines) {
+        int index_min = 0;
+        for(int i = 0; i < lines.size(); i++) {
+            if (sort_flag_ == Parser.Flag.INCREASE.ordinal()) {
+                if (lines.get(i).compareTo(lines.get(index_min)) < 0) index_min = i;
+            } else {
+                if (lines.get(i).compareTo(lines.get(index_min)) > 0) index_min = i;
+            }
+        }
+        return index_min;
+    }
+
+    private void write(String result) throws IOException {
+        writer_.write(result + "\n");
     }
 
     private void callParser() throws Exception {
@@ -40,19 +85,11 @@ public class MergeSort {
 
     private void setReaders() {
         for (File it : files_) {
-            if (data_flag_ == Parser.Flag.INTEGER.ordinal()) reader.add(new IntegerReader(sort_flag_,it));
-            else {
-                reader.add(new StringReader(sort_flag_,it));
+            if (data_flag_ == Parser.Flag.INTEGER.ordinal()) {
+                reader_.add(new IntegerReader(sort_flag_,it));
+            } else {
+                reader_.add(new StringReader(sort_flag_,it));
             }
-        }
-    }
-
-    public void Sort() {
-        try {
-            callParser();
-            validFiles();
-        }  catch (Exception e) {
-            System.out.println(e.getMessage());
         }
     }
 
@@ -78,6 +115,7 @@ public class MergeSort {
     }
 
     private void checkOutputFile(File file) throws Exception {
+        System.out.println(file.getName());
         if (!checkFileExtension(file)) throw new Exception("Error file extension. You can use just *.txt files");
         if (file.isFile()) {
             System.out.println("Output file already exist\n Do you want overwrite it? y/n");
@@ -85,13 +123,15 @@ public class MergeSort {
             String Answer = readTerm.next();
             switch (Answer.charAt(0)) {
                 case 'y'|'Y' : {
-                        FileOutputStream fos = new FileOutputStream(file);
+//                        FileOutputStream fos = new FileOutputStream(file);
+                        writer_ = new FileWriter(file);
                         break;
                 }
                 default: throw new Exception("Output file already exist");
             }
         } else {
-            file.createNewFile();
+//            file.createNewFile();
+            writer_ = new FileWriter(file);
         }
     }
 }

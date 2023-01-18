@@ -4,7 +4,6 @@ import bin.parser.Parser;
 
 import java.io.File;
 
-import static java.lang.Character.isDigit;
 import static java.lang.Character.isWhitespace;
 
 public class StringReader extends AbstractReader {
@@ -16,15 +15,18 @@ public class StringReader extends AbstractReader {
     public boolean validLine(String input) {
         if (input.isEmpty()) return false;
         for (char sym : input.toCharArray()) {
-            if ((isDigit(sym) || isWhitespace(sym)) && sym != '\n' && sym != '\r') {
+            if (isWhitespace(sym) && sym != '\n' && sym != '\r') {
                 return false;
             }
         }
         return true;
     }
-
     @Override
-    public boolean compareData(String first, String second)  {
-        return sort_flag_ == Parser.Flag.INCREASE.ordinal() ?  first.compareTo(second) < 0 : first.compareTo(second) > 0;
+    public boolean compare(String first, String second) {
+        if (sort_flag_ == Parser.Flag.INCREASE.ordinal())
+            return first.compareTo(second) <= 0;
+        else
+            return first.compareTo(second) > 0;
     }
+
 }

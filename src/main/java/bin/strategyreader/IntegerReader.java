@@ -22,10 +22,11 @@ public class IntegerReader extends AbstractReader {
             }
         return true;
     }
-
     @Override
-    public boolean compareData(String first, String second)  {
-        return sort_flag_ == Parser.Flag.INCREASE.ordinal() ? Integer.parseInt(first) < Integer.parseInt(second) : Integer.parseInt(first) > Integer.parseInt(second);
+    public boolean compare(String first, String second) {
+        if (sort_flag_ == Parser.Flag.INCREASE.ordinal())
+            return Integer.parseInt(first) <= Integer.parseInt(second);
+        else
+            return Integer.parseInt(first) > Integer.parseInt(second);
     }
-
 }

@@ -1,11 +1,9 @@
 package bin;
 
-import bin.Sort.MergeSort;
-
 
 public class Main {
     public static void main(String[] args) {
-        String [] testing_parser = { "-d", "-i","src/test/sout.txt", "src/test/test.txt", "src/test/aboba.txt"};
+        String [] testing_parser = { "-a", "-i","src/test/sout.txt", "src/test/test.txt", "src/test/out.txt", "src/test/aboba.txt"};
 //        "C:\\Users\\shams\\IdeaProjects\\CFT_test_task\\src\\test\\test.exe",
        // TODO change testing_parser to args
         MergeSort sort = new MergeSort(testing_parser);

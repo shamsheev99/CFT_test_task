@@ -7,40 +7,42 @@ import java.util.Scanner;
 
 public abstract class AbstractReader {
     protected String current_;
-
-    protected String buffer_;
     protected Scanner scanner_;
     protected final int sort_flag_;
     public AbstractReader(int sortFlag, File file) {
         sort_flag_ = sortFlag;
+        setFile(file);
+    }
+    public void setFile(File file) {
         try {
             scanner_ = new Scanner(file);
+            current_ = scanner_.nextLine();
         } catch (FileNotFoundException e) {
-            System.out.println(e.getMessage());
+            e.getMessage();
         }
-    }
 
-    public String getBuffer() {
-        return buffer_;
     }
-
     public abstract boolean validLine(String input);
-
+    public abstract boolean compare(String first, String second);
     public String getCurrent() {
         return current_;
     }
-    public void setNextToCurrent() throws EOFException {
-        buffer_ = current_;
-        System.out.println("1");
+    public boolean getNext() {
         if (scanner_.hasNextLine()) {
-            String tmp = scanner_.next();
-            while (scanner_.hasNextLine() && validLine(tmp)) {
-                current_ = tmp;
-                tmp = scanner_.next();
+            boolean local_flag = false;
+            String tmp_line = current_;
+            do {
+                if (compare(current_,tmp_line) && validLine(tmp_line)) {
+                    current_ = tmp_line;
+                    local_flag = true;
+                } else {
+                    System.out.println(tmp_line + " - incorrect line. Skipped");
+                    tmp_line = scanner_.next();
+                }
             }
-        } else {
-            throw new EOFException("EOF");
+            while (scanner_.hasNextLine() && local_flag != true);
+            return true;
         }
+        return false;
     }
-    public abstract boolean compareData(String first, String second);
 }
